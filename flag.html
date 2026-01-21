@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Republic Genesis | Custom SVG Integration</title>
+    <style>
+        body { margin: 0; background: linear-gradient(135deg, #010101 0%, #0a0a2e 100%); overflow: hidden; font-family: 'Space Mono', monospace; color: #e0e0e0; }
+        canvas { display: block; z-index: 1; position: relative; filter: drop-shadow(0 0 20px rgba(0, 200, 200, 0.3)); }
+        
+        /* Container for your SVG Background */
+        #svg-bg-container {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0.1;
+            pointer-events: none;
+            z-index: 0;
+            transition: width 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+            filter: blur(1px) brightness(1.2);
+        }
+
+        #reveal-btn {
+            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+            padding: 15px 40px; border: 2px solid #00e0ff; background: rgba(0, 10, 40, 0.9);
+            color: #00e0ff; cursor: pointer; font-size: 14px; z-index: 100;
+            letter-spacing: 3px; text-transform: uppercase; font-weight: bold;
+            box-shadow: 0 0 20px rgba(0, 224, 255, 0.5), inset 0 0 20px rgba(0, 224, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        #reveal-btn:hover {
+            box-shadow: 0 0 40px rgba(0, 224, 255, 0.8), inset 0 0 30px rgba(0, 224, 255, 0.3);
+            transform: translateX(-50%) scale(1.05);
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div id="svg-bg-container">
+        <img src="in.svg" style="width: 100%; height: 100%; object-fit: cover;" />
+    </div>
+
+    <button id="reveal-btn" onclick="toggleSecret()">REVEAL SECRET</button>
+    <canvas id="stage"></canvas>
+
+<script>
+const canvas = document.getElementById('stage');
+const ctx = canvas.getContext('2d');
+const svgContainer = document.getElementById('svg-bg-container');
+
+let isRevealed = false;
+let revealFactor = 0;
+
+// -- CONSTANTS --
+const STATES = 28; const UTS = 8; const TOTAL_ADMIN_UNITS = 36;
+const ASHOKA_CHAKRA_SPOKES = 24;
+const EPOCH_YEAR = 1950;
+const INDEPENDENCE_YEAR = 1947;
+const CURRENT_YEAR = new Date().getFullYear();
+const REPUBLIC_AGE = CURRENT_YEAR - EPOCH_YEAR;
+const INDEPENDENCE_AGE = CURRENT_YEAR - INDEPENDENCE_YEAR;
+const PRASAD_CIPHER_SUM = 130; // R(18)+A(1)+J(10)+E(5)+N(14)+D(4)+R(18)+A(1) + P(16)+R(18)+A(1)+S(19)+A(1)+D(4)
+const NEHRU_CIPHER_SUM = 119; // J(10)+A(1)+W(23)+A(1)+H(8)+A(1)+R(18)+L(12)+A(1)+L(12)+N(14)+E(5)+H(8)+R(18)+U(21)
+const CONSTITUTION_ARTICLES = 395;
+const REPUBLIC_DAY = 26; // January 26
+const INDEPENDENCE_DAY = 15; // August 15
+const ASHOKA_EDICTS = 14;
+const MAJOR_CUISINES = 6; // North Indian, South Indian, East Indian, West Indian, Northeast, Coastal
+const TEXTILE_TRADITIONS = 6; // Saree, Dhoti, Lehenga, Kurta, Panjabi, Regional wear
+const SECULARISM_ARTICLE = 25; // Constitutional article on secularism
+const DIVERSITY_PRINCIPLE = 1; // Unity in Diversity
+const REGIONAL_LANGUAGES = 22; // Major languages of India
+const CULTURAL_HERITAGE_SITES = 42; // UNESCO sites & cultural landmarks
+
+function toggleSecret() { 
+    isRevealed = !isRevealed; 
+    // Shift the SVG background along with the canvas split
+    svgContainer.style.width = isRevealed ? "55%" : "100%";
+}
+
+function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+window.addEventListener('resize', resize); resize();
+
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    revealFactor += ((isRevealed ? 1 : 0) - revealFactor) * 0.08;
+
+    const mainWidth = canvas.width * (1 - (revealFactor * 0.45));
+
+    // --- ART PANEL ---
+    ctx.save();
+    ctx.translate(mainWidth / 2, canvas.height / 2);
+    
+    // BACKGROUND GLOW CIRCLES
+    const glowGradient = ctx.createRadialGradient(0, 0, 10, 0, 0, REPUBLIC_AGE * 5);
+    glowGradient.addColorStop(0, 'rgba(0, 255, 200, 0.15)');
+    glowGradient.addColorStop(0.5, 'rgba(100, 200, 255, 0.05)');
+    glowGradient.addColorStop(1, 'rgba(0, 100, 255, 0)');
+    ctx.fillStyle = glowGradient;
+    ctx.fillRect(-REPUBLIC_AGE * 5, -REPUBLIC_AGE * 5, REPUBLIC_AGE * 10, REPUBLIC_AGE * 10);
+    
+    // SECULARISM RINGS - Constitutional harmony with vibrant colors
+    for (let ring = 1; ring <= SECULARISM_ARTICLE; ring++) {
+        const ringProgress = ring / SECULARISM_ARTICLE;
+        const hue = (Date.now() * 0.1 + ring * 10) % 360;
+        const alpha = 0.15 * (1 - ringProgress) * (0.5 + 0.5 * Math.sin(Date.now() * 0.002 + ring));
+        
+        ctx.strokeStyle = `hsla(${hue}, 100%, 50%, ${alpha})`;
+        ctx.lineWidth = 2 + revealFactor * 2;
+        ctx.beginPath();
+        ctx.arc(0, 0, (ring * CONSTITUTION_ARTICLES / 50) + Math.sin(Date.now() * 0.0003 + ring) * 5, 0, Math.PI * 2);
+        ctx.stroke();
+    }
+    
+    // RELIGIOUS COLORS - Vibrant palette for 6 faiths
+    const religiousColors = [
+        { rgb: [255, 140, 0], name: 'Hinduism' },      // Vivid Orange
+        { rgb: [0, 200, 100], name: 'Christianity' },  // Vibrant Green
+        { rgb: [0, 150, 255], name: 'Islam' },         // Bright Blue
+        { rgb: [200, 50, 255], name: 'Sikhism' },      // Vivid Purple
+        { rgb: [255, 220, 0], name: 'Buddhism' },      // Golden Yellow
+        { rgb: [255, 50, 100], name: 'Jainism' }       // Hot Pink
+    ];
+    
+    // MAIN ASHOKA SPOKES - with enhanced animations
+    for (let i = 0; i < ASHOKA_CHAKRA_SPOKES; i++) {
+        let angle = (i / ASHOKA_CHAKRA_SPOKES) * Math.PI * 2;
+        ctx.save();
+        ctx.rotate(angle + (Date.now() * 0.0001 + i * 0.02 * revealFactor));
+        
+        const cuisineIndex = i % MAJOR_CUISINES;
+        const color = religiousColors[cuisineIndex];
+        
+        // Draw glow line
+        ctx.strokeStyle = `rgba(${color.rgb[0]}, ${color.rgb[1]}, ${color.rgb[2]}, ${0.1 * (0.3 + 0.7 * revealFactor)})`;
+        ctx.lineWidth = 8 + revealFactor * 8;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        let wave = Math.sin(Date.now() * 0.001 + i) * (PRASAD_CIPHER_SUM / 8) + 
+                   Math.cos(Date.now() * 0.0008 + i * 2) * (NEHRU_CIPHER_SUM / 10);
+        let pulseAmplitude = Math.sin(Date.now() * 0.0005 + i * Math.PI / 12) * revealFactor * 15;
+        ctx.moveTo(0, 0);
+        ctx.quadraticCurveTo(TOTAL_ADMIN_UNITS * 2.5, wave + pulseAmplitude, REPUBLIC_AGE * 4 + INDEPENDENCE_AGE * 2, wave);
+        ctx.stroke();
+        
+        // Draw main bright line
+        ctx.strokeStyle = `rgba(${color.rgb[0]}, ${color.rgb[1]}, ${color.rgb[2]}, ${(0.6 + 0.4 * revealFactor)})`;
+        ctx.lineWidth = 3 + revealFactor * 3;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.quadraticCurveTo(TOTAL_ADMIN_UNITS * 2.5, wave + pulseAmplitude, REPUBLIC_AGE * 4 + INDEPENDENCE_AGE * 2, wave);
+        ctx.stroke();
+        
+        ctx.restore();
+    }
+    
+    // DIVERSITY PARTICLES - Radiating from center with rainbow effect
+    if (revealFactor > 0.1) {
+        for (let p = 0; p < MAJOR_CUISINES * 6; p++) {
+            let pAngle = (p / (MAJOR_CUISINES * 6)) * Math.PI * 2 + Date.now() * 0.0003;
+            let pRadius = (REPUBLIC_AGE * 2.5) * Math.sin(Date.now() * 0.0004 + p) + CONSTITUTION_ARTICLES / 5;
+            let px = Math.cos(pAngle) * pRadius;
+            let py = Math.sin(pAngle) * pRadius;
+            
+            const particleColor = religiousColors[p % MAJOR_CUISINES];
+            const opacity = 0.6 * revealFactor * (1 - Math.abs(Math.sin(Date.now() * 0.001 + p)));
+            
+            ctx.fillStyle = `rgba(${particleColor.rgb[0]}, ${particleColor.rgb[1]}, ${particleColor.rgb[2]}, ${opacity})`;
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = `rgba(${particleColor.rgb[0]}, ${particleColor.rgb[1]}, ${particleColor.rgb[2]}, 0.8)`;
+            ctx.beginPath();
+            ctx.arc(px, py, 3 + revealFactor * 2, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        ctx.shadowBlur = 0;
+    }
+    
+    // CENTRAL MANDALA - Rotating religious harmony symbol
+    if (revealFactor > 0.2) {
+        const mandalaSize = 80 * revealFactor;
+        ctx.save();
+        ctx.rotate(Date.now() * 0.0002);
+        
+        for (let m = 0; m < MAJOR_CUISINES; m++) {
+            ctx.fillStyle = `rgba(${religiousColors[m].rgb[0]}, ${religiousColors[m].rgb[1]}, ${religiousColors[m].rgb[2]}, ${0.3 * revealFactor})`;
+            ctx.beginPath();
+            ctx.arc(
+                Math.cos((m / MAJOR_CUISINES) * Math.PI * 2) * (mandalaSize * 0.6),
+                Math.sin((m / MAJOR_CUISINES) * Math.PI * 2) * (mandalaSize * 0.6),
+                mandalaSize * 0.3,
+                0,
+                Math.PI * 2
+            );
+            ctx.fill();
+        }
+        
+        ctx.fillStyle = `rgba(0, 255, 200, ${0.5 * revealFactor})`;
+        ctx.beginPath();
+        ctx.arc(0, 0, mandalaSize * 0.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+    }
+    
+    ctx.restore();
+
+    // --- EXPANDED EXPLANATION PANEL ---
+    if (revealFactor > 0.01) {
+        ctx.save();
+        ctx.globalAlpha = Math.min(1, revealFactor * 2); // Make it appear faster
+        
+        // Draw background panel on the right side
+        const panelX = canvas.width * 0.55;
+        const panelY = canvas.height * 0.05;
+        const panelWidth = canvas.width * 0.43;
+        const panelHeight = canvas.height * 0.9;
+        
+        // Semi-transparent background for text
+        ctx.fillStyle = 'rgba(10, 20, 60, 0.85)';
+        ctx.fillRect(panelX, panelY, panelWidth, panelHeight);
+        
+        // Border glow
+        ctx.strokeStyle = `rgba(0, 200, 255, ${0.5 * revealFactor})`;
+        ctx.lineWidth = 2;
+        ctx.strokeRect(panelX, panelY, panelWidth, panelHeight);
+        
+        const x = panelX + 25;
+        let y = panelY + 30;
+
+        const write = (text, color, size, bold = false, glow = false) => {
+            if (glow) {
+                ctx.shadowBlur = 20;
+                ctx.shadowColor = color;
+            }
+            ctx.fillStyle = color;
+            ctx.font = `${bold ? 'bold ' : ''}${size}px Space Mono`;
+            ctx.fillText(text, x, y);
+            ctx.shadowBlur = 0;
+            y += size + 14;
+        };
+
+        // Rainbow title effect
+        const gradient = ctx.createLinearGradient(x, y - 40, x + 350, y - 40);
+        gradient.addColorStop(0, '#FF6B9D');
+        gradient.addColorStop(0.33, '#00D9FF');
+        gradient.addColorStop(0.66, '#00FF88');
+        gradient.addColorStop(1, '#FFD700');
+        
+        ctx.fillStyle = gradient;
+        ctx.font = `bold 20px Space Mono`;
+        ctx.fillText("REPUBLIC GENESIS", x, y);
+        y += 30;
+        
+        write("HOW NUMBERS BUILD THE MANDALA", "#00D9FF", 10, true);
+        y += 8;
+        
+        write(`📅 ${INDEPENDENCE_YEAR} → Independence Birth`, "#FF6B9D", 10, true);
+        write(`🏛️  ${EPOCH_YEAR} → Republic Foundation`, "#00FF88", 10, true);
+        write(`⏰ ${CURRENT_YEAR} → Present Moment`, "#FFD700", 10, true);
+        
+        y += 8;
+        write("━━━━━━━━━━━━━━━━━", "#FF6B9D", 10);
+        y += 8;
+        
+        write("THE ROTATING SPOKES", "#FF6B9D", 11, true);
+        write(`24 Spokes = Ashoka Chakra symbol`, "#00FF88", 9);
+        write(`Each spoke: ${REPUBLIC_AGE} yrs amplitude`, "#aaa", 9);
+        write(`Rotation: Prasad cipher ${PRASAD_CIPHER_SUM}`, "#aaa", 9);
+        write(`Wave: Nehru cipher ${NEHRU_CIPHER_SUM}`, "#aaa", 9);
+        
+        y += 10;
+        write("6 COLORED RAYS", "#00D9FF", 11, true);
+        write(`🟠 North Indian  🟢 South Indian`, "#FFD700", 9);
+        write(`🔵 East Indian   🟣 West Indian`, "#00FF88", 9);
+        write(`🟡 Northeast     🔴 Coastal`, "#FF6B9D", 9);
+        
+        y += 10;
+        write("25 HARMONIC RINGS", "#FF6B9D", 11, true);
+        write(`Constitutional Article 25 = Secularism`, "#00FFFF", 9);
+        write(`Radius = ${CONSTITUTION_ARTICLES} ÷ 50`, "#aaa", 9);
+        write(`Pulsing together = Unity Symbol`, "#aaa", 9);
+        
+        y += 10;
+        write("PARTICLES ORBIT", "#FFD700", 11, true);
+        write(`${MAJOR_CUISINES} × 6 = Cultural DNA`, "#00FF88", 9);
+        write(`Radius: ${REPUBLIC_AGE} years × 2.5`, "#aaa", 9);
+        write(`Breathing = Living Nation`, "#aaa", 9);
+        
+        y += 10;
+        write("HIDDEN CIPHER LAYER", "#FF00FF", 11, true);
+        write(`PRASAD: ${PRASAD_CIPHER_SUM} (Primary wave)`, "#00FF88", 9, true);
+        write(`NEHRU: ${NEHRU_CIPHER_SUM} (Harmonic layer)`, "#00D9FF", 9, true);
+        
+        y += 10;
+        write("CULTURAL DATA", "#00FF88", 11, true);
+        write(`${TEXTILE_TRADITIONS} Textile Traditions`, "#FFD700", 9);
+        write(`${REGIONAL_LANGUAGES} Languages | ${CULTURAL_HERITAGE_SITES} Sites`, "#00FFFF", 9);
+        write(`${STATES}+${UTS} = ${TOTAL_ADMIN_UNITS} Units`, "#FF6B9D", 9);
+        
+        y += 10;
+        write("━━━━━━━━━━━━━━━━━", "#00FF88", 10);
+        write(`6 CUISINES × 6 WEARS`, "#00FFFF", 11, true);
+        write(`ONE REPUBLIC'S SOUL`, "#FFD700", 11, true);
+        
+        ctx.restore();
+    }
+    requestAnimationFrame(draw);
+}
+draw();
+</script>
+</body>
+</html>

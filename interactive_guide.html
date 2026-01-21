@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Republic Day Monument - Interactive Encoding Guide</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #0a0a1a 0%, #001a2e 50%, #0a0a1a 100%);
+    min-height: 100vh;
+    color: #fff;
+    padding: 20px;
+  }
+
+  .main-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: 30px;
+    align-items: start;
+  }
+
+  .monument-section {
+    position: relative;
+    background: rgba(10, 10, 26, 0.8);
+    border-radius: 15px;
+    padding: 30px;
+    border: 2px solid rgba(255, 140, 0, 0.3);
+    box-shadow: 0 0 40px rgba(255, 140, 0, 0.2);
+  }
+
+  .monument-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 19.5 / 10;
+    background: linear-gradient(135deg, rgba(10, 10, 26, 0.9), rgba(0, 26, 46, 0.9));
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .monument-container svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Annotation Overlay */
+  .annotation-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .control-panel {
+    background: rgba(10, 10, 26, 0.9);
+    border-radius: 15px;
+    padding: 25px;
+    border: 2px solid rgba(34, 177, 76, 0.3);
+    max-height: 90vh;
+    overflow-y: auto;
+    position: sticky;
+    top: 20px;
+  }
+
+  .control-panel::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .control-panel::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+  }
+
+  .control-panel::-webkit-scrollbar-thumb {
+    background: rgba(255, 140, 0, 0.4);
+    border-radius: 10px;
+  }
+
+  .control-panel::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 140, 0, 0.6);
+  }
+
+  .panel-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 25px;
+    color: #FFD700;
+    text-align: center;
+    border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+    padding-bottom: 15px;
+  }
+
+  .encoding-button {
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, rgba(255, 140, 0, 0.2), rgba(34, 177, 76, 0.2));
+    border: 2px solid rgba(255, 140, 0, 0.4);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .encoding-button:hover {
+    background: linear-gradient(135deg, rgba(255, 140, 0, 0.4), rgba(34, 177, 76, 0.4));
+    border-color: rgba(255, 140, 0, 0.7);
+    transform: translateX(5px);
+    box-shadow: 0 0 15px rgba(255, 140, 0, 0.3);
+  }
+
+  .encoding-button.active {
+    background: linear-gradient(135deg, rgba(255, 140, 0, 0.6), rgba(34, 177, 76, 0.6));
+    border-color: #FFD700;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+  }
+
+  .encoding-button .number {
+    display: inline-block;
+    background: #FF8C00;
+    color: #fff;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 24px;
+    margin-right: 8px;
+    font-size: 12px;
+    font-weight: bold;
+  }
+
+  .explanation-panel {
+    background: rgba(34, 177, 76, 0.1);
+    border: 2px solid rgba(34, 177, 76, 0.4);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+    min-height: 250px;
+    display: none;
+  }
+
+  .explanation-panel.active {
+    display: block;
+    animation: slideIn 0.3s ease;
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .explanation-panel h3 {
+    color: #32CD32;
+    margin-bottom: 12px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .explanation-panel .label {
+    display: inline-block;
+    background: #32CD32;
+    color: #000;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  .explanation-panel p {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #ddd;
+    margin-bottom: 10px;
+  }
+
+  .explanation-panel .meaning {
+    background: rgba(255, 140, 0, 0.1);
+    border-left: 3px solid #FF8C00;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 4px;
+  }
+
+  .explanation-panel .meaning strong {
+    color: #FFD700;
+  }
+
+  .category-label {
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #00D9FF;
+    margin-top: 10px;
+    padding: 5px 0;
+    border-top: 1px solid rgba(0, 217, 255, 0.2);
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .header h1 {
+    font-size: 32px;
+    color: #FFD700;
+    margin-bottom: 10px;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+  }
+
+  .header p {
+    color: #00D9FF;
+    font-size: 14px;
+  }
+
+  .highlight-annotation {
+    stroke: #FFD700;
+    stroke-width: 2;
+    fill: none;
+    pointer-events: none;
+    filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.6));
+  }
+
+  .annotation-arrow {
+    stroke: #00D9FF;
+    stroke-width: 2;
+    fill: none;
+    pointer-events: none;
+    filter: drop-shadow(0 0 5px rgba(0, 217, 255, 0.6));
+    animation: arrowPulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes arrowPulse {
+    0%, 100% { stroke-width: 2; opacity: 0.6; }
+    50% { stroke-width: 3; opacity: 1; }
+  }
+
+  .annotation-label {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.9);
+    color: #FFD700;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: bold;
+    border: 1px solid #FFD700;
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 100;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+  }
+
+  .reset-btn {
+    width: 100%;
+    padding: 12px;
+    margin-top: 20px;
+    background: linear-gradient(135deg, rgba(0, 217, 255, 0.3), rgba(70, 130, 180, 0.3));
+    border: 2px solid rgba(0, 217, 255, 0.5);
+    border-radius: 8px;
+    color: #00D9FF;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .reset-btn:hover {
+    background: linear-gradient(135deg, rgba(0, 217, 255, 0.5), rgba(70, 130, 180, 0.5));
+    box-shadow: 0 0 15px rgba(0, 217, 255, 0.4);
+  }
+
+  @media (max-width: 1024px) {
+    .main-container {
+      grid-template-columns: 1fr;
+    }
+    
+    .control-panel {
+      max-height: 400px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🇮🇳 Republic Day Monument</h1>
+  <p>Interactive Encoding Explorer - Click any button to reveal secrets!</p>
+  <div style="margin-top: 15px; font-family: 'Courier New', monospace; font-size: 10px; color: rgba(255, 215, 0, 0.5); letter-spacing: 1px;">
+    <div style="margin-bottom: 5px; font-size: 9px; text-transform: uppercase; color: rgba(0, 217, 255, 0.5);">🔐 Encoded Message Hash</div>
+    <div style="background: rgba(255, 215, 0, 0.05); padding: 8px 12px; border-radius: 6px; border: 1px solid rgba(255, 215, 0, 0.2); font-weight: bold; word-break: break-all; color: rgba(255, 215, 0, 0.7);">77ebe5c38e14a54e7d43122325744c22</div>
+    <div style="margin-top: 5px; font-size: 9px; color: rgba(100, 150, 255, 0.4);">echo -n "happy republic day" | md5sum</div>
+  </div>
+</div>
+
+<div class="main-container">
+  <div class="monument-section">
+    <div class="monument-container">
+      <iframe src="new.html" style="width:100%; height:100%; border:none; border-radius:10px;"></iframe>
+      <canvas class="annotation-canvas" id="annotationCanvas"></canvas>
+    </div>
+  </div>
+
+  <div class="control-panel">
+    <div class="panel-title">🔐 REVEAL ENCODINGS</div>
+
+    <!-- PRIMARY ENCODINGS -->
+    <div class="category-label">PRIMARY (Main Constitutional Numbers)</div>
+
+    <button class="encoding-button" data-encoding="1950">
+      <span class="number">①</span> 1950 - Constitution Year
+    </button>
+
+    <button class="encoding-button" data-encoding="26">
+      <span class="number">②</span> 26 - Republic Day
+    </button>
+
+    <button class="encoding-button" data-encoding="24">
+      <span class="number">③</span> 24 - Chakra Spokes
+    </button>
+
+    <button class="encoding-button" data-encoding="3">
+      <span class="number">④</span> 3 - Tricolour
+    </button>
+
+    <button class="encoding-button" data-encoding="75">
+      <span class="number">⑤</span> 75 - Years of Republic
+    </button>
+
+    <!-- SECONDARY ENCODINGS -->
+    <div class="category-label">SECONDARY (Diversity & Structure)</div>
+
+    <button class="encoding-button" data-encoding="22">
+      <span class="number">⑥</span> 22 - Official Languages
+    </button>
+
+    <button class="encoding-button" data-encoding="28">
+      <span class="number">⑦</span> 28 - States & UTs
+    </button>
+
+    <button class="encoding-button" data-encoding="8">
+      <span class="number">⑧</span> 8 - Union Territories
+    </button>
+
+    <button class="encoding-button" data-encoding="365">
+      <span class="number">⑨</span> 365 - Constitutional Days
+    </button>
+
+    <button class="encoding-button" data-encoding="50">
+      <span class="number">⑩</span> 50 - Scheduled Groups
+    </button>
+
+    <!-- BONUS ENCODINGS -->
+    <div class="category-label">BONUS (Extended Symbolism)</div>
+
+    <button class="encoding-button" data-encoding="144">
+      <span class="number">⑪</span> 144 - Spark Points
+    </button>
+
+    <button class="encoding-button" data-encoding="12">
+      <span class="number">⑫</span> 12 - Monthly Cycles
+    </button>
+
+    <button class="encoding-button" data-encoding="16">
+      <span class="number">⑬</span> 16 - Power Rays
+    </button>
+
+    <button class="encoding-button" data-encoding="3spirals">
+      <span class="number">⑭</span> 3 - Renewal Spirals
+    </button>
+
+    <button class="encoding-button" data-encoding="background">
+      <span class="number">✦</span> Background Elements
+    </button>
+
+    <!-- EXPLANATION PANEL -->
+    <div class="explanation-panel" id="explanationPanel">
+      <h3 id="expTitle">👈 Click any button to begin</h3>
+      <div id="expContent"></div>
+    </div>
+
+    <button class="reset-btn" onclick="resetView()">CLEAR ALL ✕</button>
+  </div>
+</div>
+
+<script>
+  const encodingData = {
+    1950: {
+      title: "📏 1950 - Constitution Year",
+      label: "Aspect Ratio",
+      explanation: `<p><strong>What it means:</strong> The year India's Constitution came into force</p>
+        <div class="meaning"><strong>Visual Encoding:</strong> The entire artwork has a width-to-height ratio of 19.5:10, which equals 1950 (19.5 × 100 = 1950)</div>
+        <p><strong>Where to look:</strong> Check the overall proportions of the entire monument. The width is 1.95 times the height!</p>
+        <p><strong>Why it matters:</strong> This is the birth year of the Indian Republic - embedded in the very shape of the design.</p>`,
+      color: "#FF8C00",
+      highlight: { type: "rect", x: 0, y: 0, width: 800, height: 410, radius: 10 }
+    },
+
+    26: {
+      title: "📅 26 - Republic Day (January 26)",
+      label: "Outer Arc Segments",
+      explanation: `<p><strong>What it means:</strong> January 26th - the date India's Constitution took effect</p>
+        <div class="meaning"><strong>Visual Encoding:</strong> The outer edge has 26 glowing BLUE arc segments arranged in a perfect circle</div>
+        <p><strong>Where to look:</strong> Look at the outermost glowing blue arcs. Count them - there are exactly 26!</p>
+        <p><strong>Why it matters:</strong> This is the most important date in India's democratic calendar. Every January 26, India celebrates this day!</p>`,
+      color: "#00D9FF",
+      highlight: { type: "circle", cx: 400, cy: 205, r: 340 }
+    },
+
+    24: {
+      title: "⭕ 24 - Ashoka Chakra Spokes",
+      label: "Golden Pulsing Nodes",
+      explanation: `<p><strong>What it means:</strong> The 24 spokes of the Ashoka Chakra, India's sacred wheel</p>
+        <div class="meaning"><strong>Visual Encoding:</strong> 24 bright GOLDEN dots arranged in a circle that pulse like a heartbeat</div>
+        <p><strong>Where to look:</strong> Find the bright golden dots in the outer ring. They pulse and grow brighter - count them!</p>
+        <p><strong>Why it matters:</strong> The Ashoka Chakra represents eternal motion, the wheel of time, and continuous democracy.</p>`,
+      color: "#FFD700",
+      highlight: { type: "circle", cx: 400, cy: 205, r: 300 }
+    },
+
+    3: {
+      title: "🇮🇳 3 - Tricolour (Saffron, White, Green)",
+      label: "Three Constitutional Rings",
+      explanation: `<p><strong>What it means:</strong> The three colors of India's flag - representing constitutional values</p>
+        <div class="meaning"><strong>Visual Encoding:</strong> Three concentric rings in SAFFRON (orange), WHITE, and GREEN</div>
+        <p><strong>Saffron/Orange Ring:</strong> Courage and Sacrifice</p>
+        <p><strong>White Ring:</strong> Truth and Peace</p>
+        <p><strong>Green Ring:</strong> Growth and Prosperity</p>
+        <p><strong>Why it matters:</strong> These are the three pillars of India's national and constitutional identity.</p>`,
+      color: "#FF8C00",
+      highlight: { type: "circle", cx: 400, cy: 205, r: 250 }
+    },
+
+    75: {
+      title: "⏱️ 75 - Years of the Republic",
+      label: "Rotation Cycle",
+      explanation: `<p><strong>What it means:</strong> India's Republic is 75+ years old (1950-2025+)</p>
+        <div class="meaning"><strong>Visual Encoding:</strong> The ENTIRE monument completes ONE FULL ROTATION in exactly 75 SECONDS</div>
+        <p><strong>Where to look:</strong> Watch the entire design rotate slowly. It takes 75 seconds to spin full circle!</p>
+        <p><strong>Why it matters:</strong> Time itself becomes part of the symbol - representing India's journey through the years.</p>`,
+      color: "#32CD32",
+      highlight: { type: "circle", cx: 400, cy: 205, r: 350 }
+    },
+
+    22: {
+      title: "🗣️ 22 - Official Constitutional Languages",
+      label: "Cyan Inner Ring Dots",
+      explanation: `<p><strong>What it means:</strong> India's Constitution recognizes 22 official languages</p>
+        <div class="meaning"><strong>Visual Encoding:</strong> 22 small CYAN (light blue) glowing dots inside the center rings</div>
+        <p><strong>Where to look:</strong> Look inside the green center ring - find the smaller cyan dots arranged in a circle</p>
+        <p><strong>Why it matters:</strong> India is incredibly diverse - 22 major languages ensure everyone's voice is heard in governance.</p>`,
+      color: "#00CED1",
+      highlight: { type: "circle", cx: 400, cy: 205, r: 200 }
+    },
+
+    28: {
+      title: "🗺️ 28 - States & Union Territories",
+      label: "Green Outer Data Points",
+      explanation: `<p><strong>What it means:</strong> India has 28 States and Union Territories total</p>
+        <div class="meaning"><strong>Visual Encoding:</strong> 28 bright LIME GREEN dots on the outer perimeter</div>
+        <p><strong>Where to look:</strong> Check the very outer edge for tiny green glowing points spread around</p>
+        <p><strong>Why it matters:</strong> These 28 regions together form the Indian Union - each one diverse and important.</p>`,
+      color: "#32CD32",
+      highlight: { type: "circle", cx: 400, cy: 205, r: 360 }
+    },
+
+    8: {
+      title: "🔷 8 - Union Territories",
+      label: "Pink Hexagons",
+      explanation: `<p><strong>What it means:</strong> 8 of the 28 regions are Union Territories (federally controlled)</p>
+        <div class="meaning"><strong>Visual Encoding:</strong> 8 PINK/MAGENTA hexagon shapes that rotate independently</div>
+        <p><strong>Where to look:</strong> Find the 6-sided geometric shapes (hexagons) in pink color rotating around the center</p>
+        <p><strong>Why it matters:</strong> Hexagons represent modern technology and India's digital governance transformation.</p>`,
+      color: "#FF1493",
+      highlight: { type: "circle", cx: 400, cy: 205, r: 220 }
+    },
+
+    365: {
+      title: "📆 365 - Constitutional Days",
+      label: "Purple Micro-Dots",
+      explanation: `<p><strong>What it means:</strong> The Constitution governs every day of the year - 365 days</p>
+        <div class="meaning"><strong>Visual Encoding:</strong> 365 tiny PURPLE dots scattered in three rings inside the center</div>
+        <p><strong>Where to look:</strong> Inside the main rings, you'll see countless tiny purple dots twinkling</p>
+        <p><strong>Why it matters:</strong> Constitutional governance never stops - it works 365 days a year, every single day!</p>`,
+      color: "#BA55D3",
+      highlight: { type: "circle", cx: 400, cy: 205, r: 180 }
+    },
+
+    50: {
+      title: "🤝 50 - Scheduled Castes & Tribes",
+      label: "Data Flow Lines",
+      explanation: `<p><strong>What it means:</strong> The Constitution protects 50 originally recognized scheduled groups</p>
+        <div class="meaning"><strong>Visual Encoding:</strong> 50 flowing RAINBOW GRADIENT lines connecting center to outer edges</div>
+        <p><strong>Where to look:</strong> See the animated lines shooting from center to the outer rings with flowing energy</p>
+        <p><strong>Why it matters:</strong> The Constitution ensures equal rights and protections for historically marginalized communities.</p>`,
+      color: "#00D9FF",
+      highlight: { type: "circle", cx: 400, cy: 205, r: 250 }
+    },
+
+    144: {
+      title: "✨ 144 - Cosmic Completeness",
+      label: "Rotating Spark Points",
+      explanation: `<p><strong>What it means:</strong> 144 is a mystical number representing completeness in many traditions</p>
+        <div class="meaning"><strong>Visual Encoding:</strong> 144 colorful sparks (gold, cyan, green, pink) rotating around all rings</div>
+        <p><strong>Where to look:</strong> Watch the fast-rotating constellation of colorful points orbiting the entire design</p>
+        <p><strong>Why it matters:</strong> Represents universal harmony and the interconnectedness of India's constitutional framework.</p>`,
+      color: "#FFD700",
+      highlight: { type: "circle", cx: 400, cy: 205, r: 320 }
+    },
+
+    12: {
+      title: "📅 12 - Months of Constitutional Year",
+      label: "Secondary Arc Patterns",
+      explanation: `<p><strong>What it means:</strong> 12 months represent the yearly constitutional cycle</p>
+        <div class="meaning"><strong>Visual Encoding:</strong> 12 major arc segments that pulse independently throughout the design</div>
+        <p><strong>Where to look:</strong> Observe the secondary arc patterns - they pulse at different times, like months of the year</p>
+        <p><strong>Why it matters:</strong> Constitutional governance operates on a yearly calendar with regular cycles and reviews.</p>`,
+      color: "#00D9FF",
+      highlight: { type: "circle", cx: 400, cy: 205, r: 280 }
+    },
+
+    16: {
+      title: "⚡ 16 - Power Rays",
+      label: "Radial Energy Bursts",
+      explanation: `<p><strong>What it means:</strong> 16 rays of authority radiating from the center</p>
+        <div class="meaning"><strong>Visual Encoding:</strong> 16 bright rays of energy bursting outward from the center like a starburst</div>
+        <p><strong>Where to look:</strong> Watch the animated rays shooting outward from the center in all directions</p>
+        <p><strong>Why it matters:</strong> Symbolizes that constitutional power flows FROM the people AT THE CENTER outward to all regions.</p>`,
+      color: "#FFD700",
+      highlight: { type: "circle", cx: 400, cy: 205, r: 350 }
+    },
+
+    "3spirals": {
+      title: "🌀 3 - Renewal Spirals",
+      label: "Rotating Helix Patterns",
+      explanation: `<p><strong>What it means:</strong> 3 continuous spirals representing constitutional renewal and evolution</p>
+        <div class="meaning"><strong>Visual Encoding:</strong> 3 spiral patterns rotating in opposite directions creating a helix effect</div>
+        <p><strong>Where to look:</strong> In the background, watch the slowly rotating spiral patterns</p>
+        <p><strong>Why it matters:</strong> The Constitution is a LIVING document - it constantly evolves and renews itself through interpretation and amendment.</p>`,
+      color: "#FF1493",
+      highlight: { type: "circle", cx: 400, cy: 205, r: 340 }
+    },
+
+    background: {
+      title: "🎨 Background Elements",
+      label: "Living Canvas",
+      explanation: `<p><strong>What they mean:</strong> The background represents the foundation and continuity of governance</p>
+        <div class="meaning"><strong>Visual Elements:</strong></div>
+        <p>🔹 <strong>Triangular Mesh:</strong> The intricate legal framework</p>
+        <p>🔹 <strong>Hexagonal Grid:</strong> Federal and regional structure</p>
+        <p>🔹 <strong>Wave Patterns:</strong> Continuous flow of governance</p>
+        <p>🔹 <strong>Floating Particles:</strong> 80 dots representing the people moving and interacting</p>
+        <p>🔹 <strong>Color Gradients:</strong> Blend of national colors representing unity</p>
+        <p><strong>Why it matters:</strong> The background shows that constitutional governance is not static - it's a living, breathing process.</p>`,
+      color: "#00D9FF",
+      highlight: { type: "rect", x: 0, y: 0, width: 800, height: 410, radius: 10 }
+    }
+  };
+
+  const buttons = document.querySelectorAll('.encoding-button');
+  const canvas = document.getElementById('annotationCanvas');
+  const ctx = canvas.getContext('2d');
+  let currentEncoding = null;
+
+  // Set canvas size
+  function resizeCanvas() {
+    const container = document.querySelector('.monument-container');
+    const rect = container.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  buttons.forEach(button => {
+    button.addEventListener('click', () => {
+      const encoding = button.dataset.encoding;
+      selectEncoding(encoding, button);
+    });
+  });
+
+  function selectEncoding(encoding, button) {
+    // Update button states
+    buttons.forEach(btn => btn.classList.remove('active'));
+    button.classList.add('active');
+
+    // Update explanation panel
+    const data = encodingData[encoding];
+    document.getElementById('expTitle').innerHTML = data.title;
+    document.getElementById('expContent').innerHTML = data.label + data.explanation;
+    document.getElementById('explanationPanel').classList.add('active');
+
+    // Draw annotation
+    currentEncoding = encoding;
+    drawAnnotation(data);
+  }
+
+  function drawAnnotation(data) {
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    if (!data.highlight) return;
+
+    ctx.strokeStyle = data.color;
+    ctx.lineWidth = 3;
+    ctx.globalAlpha = 0.8;
+
+    const h = data.highlight;
+    const scale = canvas.width / 800;
+
+    if (h.type === 'circle') {
+      // Draw pulsing circle
+      ctx.beginPath();
+      ctx.arc(h.cx * scale, h.cy * scale, h.r * scale, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Draw secondary circle
+      ctx.strokeStyle = data.color;
+      ctx.globalAlpha = 0.4;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(h.cx * scale, h.cy * scale, (h.r + 20) * scale, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Draw glow effect
+      const gradient = ctx.createRadialGradient(h.cx * scale, h.cy * scale, h.r * scale, h.cx * scale, h.cy * scale, (h.r + 40) * scale);
+      gradient.addColorStop(0, data.color + '40');
+      gradient.addColorStop(1, data.color + '00');
+      ctx.fillStyle = gradient;
+      ctx.fill();
+    } else if (h.type === 'rect') {
+      ctx.globalAlpha = 0.6;
+      ctx.strokeStyle = data.color;
+      ctx.lineWidth = 3;
+      ctx.strokeRect(h.x * scale, h.y * scale, h.width * scale, h.height * scale);
+
+      // Corner marks
+      const cornerSize = 20 * scale;
+      const corners = [
+        [h.x, h.y],
+        [h.x + h.width, h.y],
+        [h.x, h.y + h.height],
+        [h.x + h.width, h.y + h.height]
+      ];
+
+      corners.forEach(([x, y]) => {
+        ctx.beginPath();
+        ctx.moveTo(x * scale, y * scale);
+        ctx.lineTo((x + cornerSize) * scale, y * scale);
+        ctx.moveTo(x * scale, y * scale);
+        ctx.lineTo(x * scale, (y + cornerSize) * scale);
+        ctx.stroke();
+      });
+    }
+  }
+
+  function resetView() {
+    buttons.forEach(btn => btn.classList.remove('active'));
+    document.getElementById('explanationPanel').classList.remove('active');
+    document.getElementById('expTitle').innerHTML = '👈 Click any button to begin';
+    document.getElementById('expContent').innerHTML = '';
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    currentEncoding = null;
+  }
+</script>
+
+</body>
+</html>

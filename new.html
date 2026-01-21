@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Republic Day — Encoded Digital Monument</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    width: 100%;
+    height: 100vh;
+    font-family: 'Courier New', monospace;
+    overflow: hidden;
+    background: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+
+  /* SVG Background */
+  #background-svg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    z-index: 1;
+  }
+
+  .container {
+    position: relative;
+    width: 75vmin;
+    height: 75vmin;
+    z-index: 10;
+    perspective: 1200px;
+  }
+
+  .container:hover svg {
+    filter: drop-shadow(0 0 150px rgba(255, 140, 0, 0.35)) 
+            drop-shadow(0 0 100px rgba(34, 177, 76, 0.25))
+            drop-shadow(0 0 120px rgba(0, 217, 255, 0.3));
+  }
+
+  svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 0 80px rgba(255, 140, 0, 0.15)) 
+            drop-shadow(0 0 40px rgba(34, 177, 76, 0.08))
+            drop-shadow(0 0 60px rgba(70, 130, 180, 0.1));
+    transition: filter 0.3s ease;
+  }
+
+  /* Constitutional Foundation Layers (3) */
+  .layer-outer { 
+    fill: none;
+    stroke: url(#gradient-orange);
+    stroke-width: 3;
+    opacity: 0.95;
+    filter: drop-shadow(0 0 20px rgba(255, 140, 0, 0.8));
+    animation: layer-pulse-outer 4s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
+  }
+
+  @keyframes layer-pulse-outer {
+    0%, 100% { stroke-width: 3; opacity: 0.85; }
+    50% { stroke-width: 4.5; opacity: 0.98; }
+  }
+
+  .layer-mid {
+    fill: none;
+    stroke: url(#gradient-white);
+    stroke-width: 2.5;
+    opacity: 0.85;
+    animation: layer-pulse-mid 3.5s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
+    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.4));
+  }
+
+  @keyframes layer-pulse-mid {
+    0%, 100% { stroke-width: 2.5; opacity: 0.75; }
+    50% { stroke-width: 3.5; opacity: 0.95; }
+  }
+
+  .layer-inner {
+    fill: none;
+    stroke: url(#gradient-green);
+    stroke-width: 3;
+    opacity: 0.92;
+    filter: drop-shadow(0 0 20px rgba(34, 177, 76, 0.7));
+    animation: layer-pulse-inner 3s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
+  }
+
+  @keyframes layer-pulse-inner {
+    0%, 100% { stroke-width: 3; opacity: 0.85; }
+    50% { stroke-width: 4; opacity: 0.95; }
+  }
+
+  /* TRIANGULAR MESH PATTERN (Background Encoding) */
+  .mesh-triangle {
+    fill: none;
+    stroke: url(#gradient-mesh);
+    stroke-width: 0.5;
+    opacity: 0.4;
+    animation: mesh-pulse 5s ease-in-out infinite;
+  }
+
+  @keyframes mesh-pulse {
+    0%, 100% { opacity: 0.2; stroke-width: 0.4; }
+    50% { opacity: 0.5; stroke-width: 0.7; }
+  }
+
+  /* WAVE PATTERN (Background Ripples) */
+  .wave-path {
+    fill: none;
+    stroke: url(#gradient-wave);
+    stroke-width: 0.8;
+    opacity: 0.3;
+    animation: wave-flow 6s ease-in-out infinite;
+  }
+
+  @keyframes wave-flow {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 0.5; }
+  }
+
+  /* SPIRAL ENCODING */
+  .spiral-element {
+    fill: none;
+    stroke: url(#gradient-spiral);
+    stroke-width: 1;
+    opacity: 0.5;
+    animation: spiral-rotate 30s linear infinite, spiral-pulse 3s ease-in-out infinite;
+  }
+
+  @keyframes spiral-rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes spiral-pulse {
+    0%, 100% { opacity: 0.3; stroke-width: 0.8; }
+    50% { opacity: 0.6; stroke-width: 1.3; }
+  }
+
+  /* HEXAGONAL GRID */
+  .hex-grid {
+    fill: none;
+    stroke: url(#gradient-hex-grid);
+    stroke-width: 0.6;
+    opacity: 0.35;
+    animation: hex-float 8s ease-in-out infinite;
+  }
+
+  @keyframes hex-float {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 0.5; }
+  }
+
+  /* CIRCULAR WAVES (Ripple effect) */
+  .ripple-circle {
+    fill: none;
+    stroke: url(#gradient-ripple);
+    stroke-width: 0.5;
+    opacity: 0.4;
+  }
+
+  @keyframes ripple {
+    from {
+      r: 10;
+      opacity: 1;
+    }
+    to {
+      r: 500;
+      opacity: 0;
+    }
+  }
+
+  /* 26 January Segments */
+  .arc-segment {
+    fill: none;
+    stroke: url(#gradient-tech-blue);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    opacity: 0.7;
+    animation: arc-glow 3s ease-in-out infinite, arc-strobe 0.8s ease-in-out infinite;
+    filter: drop-shadow(0 0 6px rgba(0, 217, 255, 0.4));
+  }
+
+  @keyframes arc-glow {
+    0%, 100% { opacity: 0.4; stroke-width: 1.2; }
+    50% { opacity: 0.95; stroke-width: 2; }
+  }
+
+  @keyframes arc-strobe {
+    0%, 100% { filter: drop-shadow(0 0 6px rgba(0, 217, 255, 0.4)); }
+    50% { filter: drop-shadow(0 0 15px rgba(0, 217, 255, 0.8)); }
+  }
+
+  /* 24 Constitutional Hours */
+  .node-primary {
+    fill: url(#gradient-node-primary);
+    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.8));
+  }
+
+  .node-pulse {
+    animation: pulse-tech 2s cubic-bezier(0.4, 0, 0.6, 1) infinite, node-glow 1.5s ease-in-out infinite;
+  }
+
+  @keyframes pulse-tech {
+    0%, 100% { opacity: 0.2; r: 3; }
+    50% { opacity: 0.95; r: 8; }
+  }
+
+  @keyframes node-glow {
+    0%, 100% { filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.6)); }
+    50% { filter: drop-shadow(0 0 15px rgba(255, 215, 0, 1)); }
+  }
+
+  /* 22 Languages (Inner Data Ring) */
+  .lang-node {
+    fill: url(#gradient-tech-cyan);
+    animation: float-orbit 8s linear infinite, lang-pulse 2.5s ease-in-out infinite;
+    opacity: 0.8;
+    filter: drop-shadow(0 0 6px rgba(0, 206, 209, 0.6));
+  }
+
+  @keyframes float-orbit {
+    0% { opacity: 0.5; }
+    50% { opacity: 0.95; }
+    100% { opacity: 0.5; }
+  }
+
+  @keyframes lang-pulse {
+    0%, 100% { r: 3; filter: drop-shadow(0 0 4px rgba(0, 206, 209, 0.4)); }
+    50% { r: 5; filter: drop-shadow(0 0 12px rgba(0, 206, 209, 0.8)); }
+  }
+
+  /* 28 States/UTs (Outer Data Points) */
+  .state-node {
+    fill: url(#gradient-tech-lime);
+    animation: scan-pulse 1.5s ease-in-out infinite, state-bounce 3s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+    opacity: 0.75;
+    filter: drop-shadow(0 0 5px rgba(50, 205, 50, 0.6));
+  }
+
+  @keyframes scan-pulse {
+    0%, 100% { opacity: 0.4; r: 2.5; }
+    50% { opacity: 0.95; r: 5; }
+  }
+
+  @keyframes state-bounce {
+    0%, 100% { filter: drop-shadow(0 0 4px rgba(50, 205, 50, 0.4)); }
+    50% { filter: drop-shadow(0 0 12px rgba(50, 205, 50, 0.8)); }
+  }
+
+  /* 365 Day Microdots (Constitutional Year Progression) */
+  .day-dot {
+    fill: url(#gradient-tech-purple);
+    opacity: 0.5;
+    animation: day-twinkle 4s ease-in-out infinite, day-pop 0.6s ease-in-out infinite;
+  }
+
+  @keyframes day-twinkle {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 0.8; }
+  }
+
+  @keyframes day-pop {
+    0%, 100% { r: 1.2; }
+    50% { r: 2.5; }
+  }
+
+  /* Main Rotation (75 years cycle) */
+  .rotate {
+    animation: rotate 75s linear infinite;
+    transform-origin: 50% 50%;
+  }
+
+  @keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  /* Secondary Rotation (faster, opposite) */
+  .counter-rotate {
+    animation: counter-rotate 50s linear infinite;
+    transform-origin: 50% 50%;
+  }
+
+  @keyframes counter-rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(-360deg); }
+  }
+
+  /* Orbital Ring Animation */
+  .orbital-fast {
+    animation: orbit-fast 20s linear infinite;
+    transform-origin: 975px 500px;
+  }
+
+  @keyframes orbit-fast {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  /* Pulsing Background Aura */
+  .aura {
+    animation: aura-pulse 3s ease-in-out infinite;
+  }
+
+  @keyframes aura-pulse {
+    0%, 100% { opacity: 0.1; filter: drop-shadow(0 0 20px rgba(255, 140, 0, 0.2)); }
+    50% { opacity: 0.3; filter: drop-shadow(0 0 40px rgba(255, 140, 0, 0.5)); }
+  }
+
+  /* RADIANT BURST (Energy waves) */
+  .burst-ray {
+    stroke: url(#gradient-burst);
+    stroke-width: 1;
+    fill: none;
+    opacity: 0.5;
+    animation: burst-glow 1.5s ease-out infinite;
+  }
+
+  @keyframes burst-glow {
+    0% { opacity: 0.8; stroke-width: 1.5; }
+    100% { opacity: 0; stroke-width: 0.5; }
+  }
+
+  /* FLOWING PARTICLES */
+  .particle-flow {
+    fill: url(#gradient-particle);
+    animation: flow-move 6s ease-in-out infinite;
+  }
+
+  @keyframes flow-move {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.8; }
+  }
+
+  /* Tech Grid Background */
+  .grid-line {
+    stroke: rgba(100, 150, 255, 0.1);
+    stroke-width: 0.8;
+  }
+
+  /* Data Connection Paths */
+  .data-line {
+    stroke: url(#gradient-data-flow);
+    stroke-width: 1;
+    fill: none;
+    stroke-dasharray: 4, 2;
+    opacity: 0.6;
+    animation: flow 8s linear infinite, data-glow 2s ease-in-out infinite;
+  }
+
+  @keyframes flow {
+    0% { stroke-dashoffset: 0; }
+    100% { stroke-dashoffset: -50; }
+  }
+
+  @keyframes data-glow {
+    0%, 100% { opacity: 0.4; stroke-width: 0.8; }
+    50% { opacity: 0.85; stroke-width: 1.4; }
+  }
+
+  /* Hexagonal Tech Elements (8 Union Territories) */
+  .hex-element {
+    fill: none;
+    stroke: url(#gradient-hex);
+    stroke-width: 1.2;
+    opacity: 0.65;
+    animation: hex-rotate 20s linear infinite, hex-glow 1.8s ease-in-out infinite;
+    filter: drop-shadow(0 0 4px rgba(255, 20, 147, 0.3));
+  }
+
+  @keyframes hex-rotate {
+    from { transform: rotate(0deg) }
+    to { transform: rotate(360deg) }
+  }
+
+  @keyframes hex-glow {
+    0%, 100% { opacity: 0.5; stroke-width: 1; filter: drop-shadow(0 0 3px rgba(255, 20, 147, 0.3)); }
+    50% { opacity: 0.85; stroke-width: 1.6; filter: drop-shadow(0 0 10px rgba(255, 20, 147, 0.7)); }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div style="position: fixed; bottom: 15px; right: 20px; z-index: 5; font-family: 'Courier New', monospace; font-size: 10px; color: rgba(255, 215, 0, 0.25); cursor: help; letter-spacing: 0.5px; transition: all 0.3s ease;" 
+       id="challengeHint"
+       title="Hover to reveal more" 
+       onmouseover="document.getElementById('hashDisplay').style.opacity='1'; document.getElementById('hashDisplay').style.visibility='visible'; this.style.color='rgba(255, 215, 0, 0.8)'; this.style.textShadow='0 0 10px rgba(255, 215, 0, 0.5)'"
+       onmouseout="document.getElementById('hashDisplay').style.opacity='0'; document.getElementById('hashDisplay').style.visibility='hidden'; this.style.color='rgba(255, 215, 0, 0.25)'; this.style.textShadow='none'">
+    <div style="font-size: 9px; margin-bottom: 3px;">🔍 CHALLENGE: FIND THE SECRET</div>
+    <div style="font-size: 8px;">Hover or explore interactive guide →</div>
+  </div>
+
+  <!-- Hidden Hash Display (Shows on Hover) -->
+  <div id="hashDisplay" style="position: fixed; bottom: 75px; right: 20px; z-index: 5; font-family: 'Courier New', monospace; font-size: 9px; color: rgba(255, 215, 0, 0); background: rgba(0, 0, 0, 0.85); padding: 12px 15px; border-radius: 8px; border: 1.5px solid rgba(255, 215, 0, 0.5); letter-spacing: 1px; transition: all 0.4s ease; opacity: 0; visibility: hidden; box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);">
+    <div style="margin-bottom: 8px; font-size: 8px; text-transform: uppercase; color: rgba(0, 217, 255, 0.7); letter-spacing: 0.5px;">🔐 Hidden Hash:</div>
+    <div style="font-weight: bold; color: rgba(255, 215, 0, 1); word-break: break-all; padding: 8px; background: rgba(255, 140, 0, 0.1); border-radius: 4px; border-left: 3px solid #FFD700;">77ebe5c38e14a54e7d43122325744c22</div>
+    <div style="margin-top: 8px; font-size: 7px; color: rgba(100, 150, 255, 0.6); text-align: center;">echo -n "happy republic day" | md5sum</div>
+  </div>
+
+<!-- 
+  ╔════════════════════════════════════════════════════════════════╗
+  ║  DIGITAL REPUBLIC MONUMENT - ENCODED MESSAGE CHALLENGE         ║
+  ║                                                                ║
+  ║  Hidden Encoding:                                             ║
+  ║  MD5(happy republic day) = 77ebe5c38e14a54e7d43122325744c22  ║
+  ║                                                                ║
+  ║  Command to verify: echo -n "happy republic day" | md5sum    ║
+  ║  Result: 77ebe5c38e14a54e7d43122325744c22                    ║
+  ║                                                                ║
+  ║  Hint: This message is hidden throughout the monument.        ║
+  ║        Check the interactive guide to find the decode!        ║
+  ╚════════════════════════════════════════════════════════════════╝
+-->
+
+<!-- 
+  DIGITAL REPUBLIC MONUMENT
+  
+  PRIMARY ENCODINGS:
+  • 1950 → 19.5:10 aspect ratio (viewBox 1950×1000)
+  • 26   → January 26; 26 outer arc segments (constitutional date)
+  • 24   → Ashoka Chakra spokes / 24-hour constitutional day
+  • 3    → Tricolour layers (saffron/white/green)
+  • 75   → Years of Republic; main rotation period (75s)
+  
+  SECONDARY ENCODINGS (TECHNOLOGY + GOVERNANCE):
+  • 22   → Official Constitutional Languages (inner data ring)
+  • 28   → States & Union Territories (outer data nodes)
+  • 8    → Union Territories (hexagonal tech elements)
+  • 365  → Constitutional Year (micro-dot progression)
+  • 50   → Original scheduled castes/tribes (base rotation offset)
+  
+  VISUAL STRATEGY:
+  - Saffron glow (outer layer) = Courage & sacrifice
+  - White/gray (middle layer) = Constitutional truth & peace
+  - Green glow (inner layer) = Growth & prosperity
+  - Tech aesthetic = Digital India, modern constitutional framework
+  - Multiple synchronized rhythms encode complexity of governance
+  - No literal symbols; pure numeric geometry + color
+  - Works in grayscale (luminosity encoding)
+-->
+
+<svg viewBox="0 0 1950 1000" class="rotate">
+  
+  <defs>
+    <!-- COLOR GRADIENTS: Respecting flag symbolism without literal representation -->
+    
+    <!-- Saffron Gradient (Courage & Sacrifice) -->
+    <linearGradient id="gradient-orange" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color: #FF8C00; stop-opacity: 0.9" />
+      <stop offset="50%" style="stop-color: #FF6B35; stop-opacity: 0.8" />
+      <stop offset="100%" style="stop-color: #FF8C00; stop-opacity: 0.9" />
+    </linearGradient>
+
+    <!-- White Gradient (Truth & Peace) -->
+    <linearGradient id="gradient-white" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color: #E8E8E8; stop-opacity: 0.85" />
+      <stop offset="50%" style="stop-color: #FFFFFF; stop-opacity: 0.9" />
+      <stop offset="100%" style="stop-color: #E8E8E8; stop-opacity: 0.85" />
+    </linearGradient>
+
+    <!-- Green Gradient (Growth & Prosperity) -->
+    <linearGradient id="gradient-green" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color: #22B14C; stop-opacity: 0.9" />
+      <stop offset="50%" style="stop-color: #32CD32; stop-opacity: 0.85" />
+      <stop offset="100%" style="stop-color: #22B14C; stop-opacity: 0.9" />
+    </linearGradient>
+
+    <!-- Tech Blue (Digital Framework) -->
+    <linearGradient id="gradient-tech-blue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color: #00D9FF; stop-opacity: 0.7" />
+      <stop offset="50%" style="stop-color: #4682B4; stop-opacity: 0.75" />
+      <stop offset="100%" style="stop-color: #00D9FF; stop-opacity: 0.7" />
+    </linearGradient>
+
+    <!-- Tech Cyan (Data Nodes) -->
+    <linearGradient id="gradient-tech-cyan" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color: #00CED1; stop-opacity: 0.8" />
+      <stop offset="100%" style="stop-color: #20B2AA; stop-opacity: 0.8" />
+    </linearGradient>
+
+    <!-- Tech Lime (State Networks) -->
+    <linearGradient id="gradient-tech-lime" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color: #32CD32; stop-opacity: 0.75" />
+      <stop offset="100%" style="stop-color: #00FF00; stop-opacity: 0.75" />
+    </linearGradient>
+
+    <!-- Tech Purple (Constitutional Days) -->
+    <linearGradient id="gradient-tech-purple" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color: #9370DB; stop-opacity: 0.7" />
+      <stop offset="100%" style="stop-color: #BA55D3; stop-opacity: 0.7" />
+    </linearGradient>
+
+    <!-- Hexagonal Tech -->
+    <linearGradient id="gradient-hex" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color: #FF1493; stop-opacity: 0.6" />
+      <stop offset="100%" style="stop-color: #FF69B4; stop-opacity: 0.6" />
+    </linearGradient>
+
+    <!-- Data Flow -->
+    <linearGradient id="gradient-data-flow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color: #00D9FF; stop-opacity: 0" />
+      <stop offset="50%" style="stop-color: #32CD32; stop-opacity: 0.8" />
+      <stop offset="100%" style="stop-color: #FF8C00; stop-opacity: 0" />
+    </linearGradient>
+
+    <!-- Node Primary -->
+    <radialGradient id="gradient-node-primary" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color: #FFD700; stop-opacity: 0.95" />
+      <stop offset="100%" style="stop-color: #FF8C00; stop-opacity: 0.8" />
+    </radialGradient>
+
+    <!-- Spark Animation -->
+    <filter id="glow-spark">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- MESH GRADIENT (Background Triangular Pattern) -->
+    <linearGradient id="gradient-mesh" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color: #00D9FF; stop-opacity: 0.5" />
+      <stop offset="50%" style="stop-color: #FF8C00; stop-opacity: 0.4" />
+      <stop offset="100%" style="stop-color: #32CD32; stop-opacity: 0.5" />
+    </linearGradient>
+
+    <!-- WAVE GRADIENT (Background Ripples) -->
+    <linearGradient id="gradient-wave" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color: #00CED1; stop-opacity: 0.6" />
+      <stop offset="50%" style="stop-color: #FF69B4; stop-opacity: 0.5" />
+      <stop offset="100%" style="stop-color: #32CD32; stop-opacity: 0.6" />
+    </linearGradient>
+
+    <!-- SPIRAL GRADIENT -->
+    <linearGradient id="gradient-spiral" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color: #FF1493; stop-opacity: 0.6" />
+      <stop offset="50%" style="stop-color: #00D9FF; stop-opacity: 0.7" />
+      <stop offset="100%" style="stop-color: #FFD700; stop-opacity: 0.6" />
+    </linearGradient>
+
+    <!-- HEX GRID GRADIENT -->
+    <linearGradient id="gradient-hex-grid" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color: #7B68EE; stop-opacity: 0.5" />
+      <stop offset="100%" style="stop-color: #00FF7F; stop-opacity: 0.5" />
+    </linearGradient>
+
+    <!-- RIPPLE GRADIENT -->
+    <linearGradient id="gradient-ripple" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color: #FF6B9D; stop-opacity: 0.7" />
+      <stop offset="100%" style="stop-color: #00D9FF; stop-opacity: 0.4" />
+    </linearGradient>
+
+    <!-- BURST GRADIENT -->
+    <linearGradient id="gradient-burst" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color: #FFD700; stop-opacity: 0.8" />
+      <stop offset="50%" style="stop-color: #FF8C00; stop-opacity: 0.6" />
+      <stop offset="100%" style="stop-color: #FF1493; stop-opacity: 0.4" />
+    </linearGradient>
+
+    <!-- PARTICLE GRADIENT -->
+    <radialGradient id="gradient-particle" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color: #00FF88; stop-opacity: 0.8" />
+      <stop offset="100%" style="stop-color: #00D9FF; stop-opacity: 0.3" />
+    </radialGradient>
+  </defs>
+
+  <!-- BACKGROUND LAYER 1: TRIANGULAR MESH PATTERN (Background Encoding = Complexity of Law) -->
+  <g id="background-mesh" opacity="0.4">
+    <script type="application/ecmascript"><![CDATA[
+      const svg = document.currentScript.closest('svg');
+      const centerX = 975, centerY = 500;
+      const meshSize = 150;
+      
+      for (let x = -100; x < 1950 + meshSize; x += meshSize) {
+        for (let y = -100; y < 1000 + meshSize; y += meshSize) {
+          // Triangle 1
+          const path1 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+          path1.setAttribute("d", `M ${x} ${y} L ${x + meshSize} ${y} L ${x} ${y + meshSize} Z`);
+          path1.setAttribute("class", "mesh-triangle");
+          svg.appendChild(path1);
+          
+          // Triangle 2
+          const path2 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+          path2.setAttribute("d", `M ${x + meshSize} ${y} L ${x + meshSize} ${y + meshSize} L ${x} ${y + meshSize} Z`);
+          path2.setAttribute("class", "mesh-triangle");
+          svg.appendChild(path2);
+        }
+      }
+    ]]></script>
+  </g>
+
+  <!-- BACKGROUND LAYER 2: CONCENTRIC HEXAGONAL GRID (Federal Structure) -->
+  <g id="background-hexgrid" opacity="0.3">
+    <script type="application/ecmascript"><![CDATA[
+      const svg = document.currentScript.closest('svg');
+      const centerX = 975, centerY = 500;
+      const hexRadius = 80;
+      
+      for (let layer = 1; layer < 8; layer++) {
+        for (let i = 0; i < 6; i++) {
+          const angle = (i * 60) * Math.PI / 180;
+          const radius = hexRadius * layer;
+          const x1 = centerX + radius * Math.cos(angle);
+          const y1 = centerY + radius * Math.sin(angle);
+          
+          const angle2 = ((i + 1) * 60) * Math.PI / 180;
+          const x2 = centerX + radius * Math.cos(angle2);
+          const y2 = centerY + radius * Math.sin(angle2);
+          
+          const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+          line.setAttribute("x1", x1);
+          line.setAttribute("y1", y1);
+          line.setAttribute("x2", x2);
+          line.setAttribute("y2", y2);
+          line.setAttribute("class", "hex-grid");
+          svg.appendChild(line);
+        }
+      }
+    ]]></script>
+  </g>
+
+  <!-- BACKGROUND LAYER 3: ORGANIC WAVE PATTERNS (Constitutional Flow) -->
+  <g id="background-waves" opacity="0.25">
+    <script type="application/ecmascript"><![CDATA[
+      const svg = document.currentScript.closest('svg');
+      const centerX = 975, centerY = 500;
+      
+      for (let wave = 0; wave < 5; wave++) {
+        let pathData = `M 0 ${centerY + wave * 100}`;
+        for (let x = 0; x <= 1950; x += 50) {
+          const y = centerY + wave * 100 + Math.sin(x / 200) * 40 + Math.cos(x / 300) * 30;
+          pathData += ` L ${x} ${y}`;
+        }
+        
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", pathData);
+        path.setAttribute("class", "wave-path");
+        svg.appendChild(path);
+      }
+    ]]></script>
+  </g>
+
+  <!-- BACKGROUND LAYER 4: RADIAL BURST ENERGY (Power and Authority) -->
+  <g id="background-burst" opacity="0.3">
+    <script type="application/ecmascript"><![CDATA[
+      const svg = document.currentScript.closest('svg');
+      const centerX = 975, centerY = 500;
+      const burstCount = 16;
+      
+      for (let i = 0; i < burstCount; i++) {
+        const angle = (i * 360 / burstCount) * Math.PI / 180;
+        const x1 = centerX;
+        const y1 = centerY;
+        const x2 = centerX + 600 * Math.cos(angle);
+        const y2 = centerY + 600 * Math.sin(angle);
+        
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute("x1", x1);
+        line.setAttribute("y1", y1);
+        line.setAttribute("x2", x2);
+        line.setAttribute("y2", y2);
+        line.setAttribute("class", "burst-ray");
+        line.style.animationDelay = `${(i / burstCount) * 1.5}s`;
+        svg.appendChild(line);
+      }
+    ]]></script>
+  </g>
+
+  <!-- BACKGROUND LAYER 5: SPIRALING DATA HELIX -->
+  <g id="background-spirals" class="counter-rotate">
+    <script type="application/ecmascript"><![CDATA[
+      const svg = document.currentScript.closest('svg');
+      const centerX = 975, centerY = 500;
+      
+      for (let spiral = 0; spiral < 3; spiral++) {
+        let pathData = `M ${centerX} ${centerY - 350}`;
+        const turns = 4;
+        const points = 120;
+        
+        for (let i = 1; i < points; i++) {
+          const angle = (i / points) * turns * Math.PI * 2;
+          const radius = 350 - (i / points) * 200 + Math.sin(i / 10) * 30;
+          const x = centerX + radius * Math.cos(angle);
+          const y = centerY + radius * Math.sin(angle);
+          pathData += ` L ${x} ${y}`;
+        }
+        
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", pathData);
+        path.setAttribute("class", "spiral-element");
+        path.style.animationDelay = `${spiral * 10}s`;
+        svg.appendChild(path);
+      }
+    ]]></script>
+  </g>
+
+  <!-- AMBIENT AURA LAYER (Pulsing background presence) -->
+  <circle cx="975" cy="500" r="500" fill="none" stroke="rgba(255,140,0,0.05)" stroke-width="3" class="aura"/>
+  <circle cx="975" cy="500" r="520" fill="none" stroke="rgba(34,177,76,0.04)" stroke-width="2" class="aura"/>
+  <circle cx="975" cy="500" r="480" fill="none" stroke="rgba(70,130,180,0.04)" stroke-width="2" class="aura" style="animation-delay: 0.5s;"/>
+  <!-- Outer: Courage & Sacrifice (Saffron) -->
+  <circle cx="975" cy="500" r="440" class="layer-outer"/>
+  
+  <!-- Middle: Truth & Peace (White) -->
+  <circle cx="975" cy="500" r="350" class="layer-mid"/>
+  
+  <!-- Inner: Growth & Prosperity (Green) -->
+  <circle cx="975" cy="500" r="260" class="layer-inner"/>
+
+  <!-- LAYER 2: 26 January Constitutional Arcs (January 26) -->
+  <g id="segments" class="counter-rotate">
+    <script type="application/ecmascript"><![CDATA[
+      const svg = document.currentScript.closest('svg');
+      const centerX = 975, centerY = 500, r = 455;
+      const segmentCount = 26;
+      const anglePerSegment = 360 / segmentCount;
+
+      for (let i = 0; i < segmentCount; i++) {
+        const startAngle = i * anglePerSegment;
+        const endAngle = startAngle + anglePerSegment * 0.82;
+
+        const startRad = startAngle * Math.PI / 180;
+        const endRad = endAngle * Math.PI / 180;
+
+        const x1 = centerX + r * Math.cos(startRad);
+        const y1 = centerY + r * Math.sin(startRad);
+        const x2 = centerX + r * Math.cos(endRad);
+        const y2 = centerY + r * Math.sin(endRad);
+
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", `M ${x1} ${y1} A ${r} ${r} 0 0 1 ${x2} ${y2}`);
+        path.setAttribute("class", "arc-segment");
+        svg.appendChild(path);
+      }
+    ]]></script>
+  </g>
+
+  <!-- LAYER 3: 24 Constitutional Hours (Ashoka Chakra Spokes → Hours) -->
+  <g id="nodes-24" class="rotate">
+    <script type="application/ecmascript"><![CDATA[
+      const svg = document.currentScript.closest('svg');
+      const centerX = 975, centerY = 500, r = 430;
+      const nodeCount = 24;
+      const anglePerNode = 360 / nodeCount;
+
+      for (let i = 0; i < nodeCount; i++) {
+        const angle = i * anglePerNode;
+        const rad = angle * Math.PI / 180;
+
+        const x = centerX + r * Math.cos(rad);
+        const y = centerY + r * Math.sin(rad);
+
+        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circle.setAttribute("cx", x);
+        circle.setAttribute("cy", y);
+        circle.setAttribute("r", "5");
+        circle.setAttribute("class", "node-primary node-pulse");
+        circle.style.animationDelay = `${(i / nodeCount) * 2}s`;
+        svg.appendChild(circle);
+      }
+    ]]></script>
+  </g>
+
+  <!-- LAYER 4: 22 Official Constitutional Languages (Inner Data Ring) -->
+  <g id="languages-22" class="counter-rotate">
+    <script type="application/ecmascript"><![CDATA[
+      const svg = document.currentScript.closest('svg');
+      const centerX = 975, centerY = 500, r = 310;
+      const langCount = 22;
+      const anglePerLang = 360 / langCount;
+
+      for (let i = 0; i < langCount; i++) {
+        const angle = i * anglePerLang;
+        const rad = angle * Math.PI / 180;
+
+        const x = centerX + r * Math.cos(rad);
+        const y = centerY + r * Math.sin(rad);
+
+        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circle.setAttribute("cx", x);
+        circle.setAttribute("cy", y);
+        circle.setAttribute("r", "3.5");
+        circle.setAttribute("class", "lang-node");
+        circle.style.animationDelay = `${(i / langCount) * 8}s`;
+        svg.appendChild(circle);
+      }
+    ]]></script>
+  </g>
+
+  <!-- LAYER 5: 28 States & UTs (Outer Data Points) -->
+  <g id="states-28" class="rotate">
+    <script type="application/ecmascript"><![CDATA[
+      const svg = document.currentScript.closest('svg');
+      const centerX = 975, centerY = 500, r = 480;
+      const stateCount = 28;
+      const anglePerState = 360 / stateCount;
+
+      for (let i = 0; i < stateCount; i++) {
+        const angle = i * anglePerState;
+        const rad = angle * Math.PI / 180;
+
+        const x = centerX + r * Math.cos(rad);
+        const y = centerY + r * Math.sin(rad);
+
+        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circle.setAttribute("cx", x);
+        circle.setAttribute("cy", y);
+        circle.setAttribute("r", "3");
+        circle.setAttribute("class", "state-node");
+        circle.style.animationDelay = `${(i / stateCount) * 1.5}s`;
+        svg.appendChild(circle);
+      }
+    ]]></script>
+  </g>
+
+  <!-- LAYER 6: 365 Constitutional Year Microdots (Progression) -->
+  <g id="days-365">
+    <script type="application/ecmascript"><![CDATA[
+      const svg = document.currentScript.closest('svg');
+      const centerX = 975, centerY = 500;
+      const dayCount = 365;
+      const anglePerDay = 360 / dayCount;
+      
+      // Distribute across 3 rings for visual variety
+      const rings = [170, 220, 270];
+
+      for (let i = 0; i < dayCount; i++) {
+        const angle = i * anglePerDay;
+        const rad = angle * Math.PI / 180;
+        const ringIndex = i % 3;
+        const r = rings[ringIndex];
+
+        const x = centerX + r * Math.cos(rad);
+        const y = centerY + r * Math.sin(rad);
+
+        const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        dot.setAttribute("cx", x);
+        dot.setAttribute("cy", y);
+        dot.setAttribute("r", "1.2");
+        dot.setAttribute("class", "day-dot");
+        dot.style.animationDelay = `${(i / dayCount) * 4}s`;
+        svg.appendChild(dot);
+      }
+    ]]></script>
+  </g>
+
+  <!-- LAYER 7: 8 Union Territories (Hexagonal Tech Elements) -->
+  <g id="territories-8">
+    <script type="application/ecmascript"><![CDATA[
+      const svg = document.currentScript.closest('svg');
+      const centerX = 975, centerY = 500, r = 340;
+      const utCount = 8;
+      const anglePerUT = 360 / utCount;
+
+      for (let i = 0; i < utCount; i++) {
+        const angle = i * anglePerUT;
+        const rad = angle * Math.PI / 180;
+
+        const x = centerX + r * Math.cos(rad);
+        const y = centerY + r * Math.sin(rad);
+
+        const hexSize = 18;
+        const hexPath = [];
+        for (let j = 0; j < 6; j++) {
+          const hexAngle = (j * 60) * Math.PI / 180;
+          const hexX = x + hexSize * Math.cos(hexAngle);
+          const hexY = y + hexSize * Math.sin(hexAngle);
+          hexPath.push(`${hexX},${hexY}`);
+        }
+
+        const polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+        polygon.setAttribute("points", hexPath.join(" "));
+        polygon.setAttribute("class", "hex-element");
+        polygon.style.transform = `rotate(${angle}deg)`;
+        polygon.style.transformOrigin = `${x}px ${y}px`;
+        svg.appendChild(polygon);
+      }
+    ]]></script>
+  </g>
+
+  <!-- LAYER 8: Data Flow Connections (50 paths = Original scheduled populations) -->
+  <g id="data-flows">
+    <script type="application/ecmascript"><![CDATA[
+      const svg = document.currentScript.closest('svg');
+      const centerX = 975, centerY = 500;
+      const flowCount = 50;
+      const anglePerFlow = 360 / flowCount;
+
+      for (let i = 0; i < flowCount; i++) {
+        const angle = i * anglePerFlow;
+        const rad = angle * Math.PI / 180;
+
+        // Flow from inner circle to outer circle
+        const r1 = 250;
+        const r2 = 450;
+
+        const x1 = centerX + r1 * Math.cos(rad);
+        const y1 = centerY + r1 * Math.sin(rad);
+        const x2 = centerX + r2 * Math.cos(rad);
+        const y2 = centerY + r2 * Math.sin(rad);
+
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute("x1", x1);
+        line.setAttribute("y1", y1);
+        line.setAttribute("x2", x2);
+        line.setAttribute("y2", y2);
+        line.setAttribute("class", "data-line");
+        line.style.animationDelay = `${(i / flowCount) * 8}s`;
+        svg.appendChild(line);
+      }
+    ]]></script>
+  </g>
+
+  <!-- BONUS LAYER: 144 Spark Points (Dynamic energy - Ashoka's historical chakra count) -->
+  <g id="sparks-144" class="orbital-fast">
+    <script type="application/ecmascript"><![CDATA[
+      const svg = document.currentScript.closest('svg');
+      const centerX = 975, centerY = 500;
+      const sparkCount = 144;
+      const anglePerSpark = 360 / sparkCount;
+
+      for (let i = 0; i < sparkCount; i++) {
+        const angle = i * anglePerSpark;
+        const rad = angle * Math.PI / 180;
+        
+        // Distribute across 4 rings
+        const rings = [150, 200, 380, 470];
+        const ringIndex = i % 4;
+        const r = rings[ringIndex];
+
+        const x = centerX + r * Math.cos(rad);
+        const y = centerY + r * Math.sin(rad);
+
+        const spark = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        spark.setAttribute("cx", x);
+        spark.setAttribute("cy", y);
+        spark.setAttribute("r", "0.8");
+        
+        // Random color assignment for visual variety
+        const colors = ['#FFD700', '#00D9FF', '#32CD32', '#FF6B9D'];
+        spark.setAttribute("fill", colors[i % colors.length]);
+        
+        spark.setAttribute("opacity", "0.6");
+        spark.style.animation = `day-twinkle 3s ease-in-out infinite`;
+        spark.style.animationDelay = `${(i / sparkCount) * 3}s`;
+        spark.setAttribute("filter", "url(#glow-spark)");
+        
+        svg.appendChild(spark);
+      }
+    ]]></script>
+  </g>
+
+  <!-- BONUS LAYER: Connecting Links (12 major arcs - months of the year) -->
+  <g id="major-arcs" class="counter-rotate">
+    <script type="application/ecmascript"><![CDATA[
+      const svg = document.currentScript.closest('svg');
+      const centerX = 975, centerY = 500, r = 400;
+      const arcCount = 12;
+      const anglePerArc = 360 / arcCount;
+
+      for (let i = 0; i < arcCount; i++) {
+        const startAngle = i * anglePerArc;
+        const endAngle = startAngle + 25;
+
+        const startRad = startAngle * Math.PI / 180;
+        const endRad = endAngle * Math.PI / 180;
+
+        const x1 = centerX + r * Math.cos(startRad);
+        const y1 = centerY + r * Math.sin(startRad);
+        const x2 = centerX + r * Math.cos(endRad);
+        const y2 = centerY + r * Math.sin(endRad);
+
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", `M ${x1} ${y1} A ${r} ${r} 0 0 1 ${x2} ${y2}`);
+        path.setAttribute("fill", "none");
+        path.setAttribute("stroke", "url(#gradient-tech-cyan)");
+        path.setAttribute("stroke-width", "0.8");
+        path.setAttribute("opacity", "0.4");
+        path.style.animation = `arc-glow 2.5s ease-in-out infinite`;
+        path.style.animationDelay = `${(i / arcCount) * 2.5}s`;
+        svg.appendChild(path);
+      }
+    ]]></script>
+  </g>
+
+</svg>
+</div>
+
+<!-- SVG Background -->
+<svg id="background-svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+  <image href="in.svg" width="1920" height="1080" preserveAspectRatio="xMidYMid slice"/>
+</svg>
+
+</body>
+</html>
